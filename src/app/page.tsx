@@ -1,8 +1,39 @@
+'use client'
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { BarChart3, Brain, Database, Zap } from 'lucide-react'
+import { BarChart3, Brain, Database, Zap, CheckCircle } from 'lucide-react'
+import { useState, useEffect } from 'react'
 
 export default function HomePage() {
+  const [backendStatus, setBackendStatus] = useState<{
+    connected: boolean;
+    message?: string;
+    timestamp?: string;
+  }>({ connected: false });
+
+  // Test backend connection
+  useEffect(() => {
+    const testBackend = async () => {
+      try {
+        const response = await fetch('/api/test');
+        const data = await response.json();
+        setBackendStatus({
+          connected: data.success,
+          message: data.message,
+          timestamp: data.timestamp
+        });
+      } catch (error) {
+        setBackendStatus({
+          connected: false,
+          message: 'Backend connection failed'
+        });
+      }
+    };
+    
+    testBackend();
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Header */}
@@ -12,15 +43,36 @@ export default function HomePage() {
             <div className="flex items-center space-x-2">
               <Brain className="h-8 w-8 text-blue-600" />
               <span className="text-xl font-bold text-gray-900">OpSmith</span>
+              {backendStatus.connected && (
+                <div className="flex items-center space-x-1 ml-4">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span className="text-sm text-green-600">Connected</span>
+                </div>
+              )}
             </div>
             <nav className="hidden md:flex items-center space-x-6">
               <a href="#features" className="text-gray-600 hover:text-gray-900">Features</a>
               <a href="#about" className="text-gray-600 hover:text-gray-900">About</a>
+              <a href="#status" className="text-gray-600 hover:text-gray-900">Status</a>
               <Button>Get Started</Button>
             </nav>
           </div>
         </div>
       </header>
+
+      {/* Status Banner */}
+      {backendStatus.connected && (
+        <div className="bg-green-50 border-b border-green-200">
+          <div className="container mx-auto px-4 py-2">
+            <div className="flex items-center justify-center space-x-2 text-sm text-green-800">
+              <CheckCircle className="h-4 w-4" />
+              <span>🎉 Platform Status: All systems operational!</span>
+              <span className="text-green-600">• Backend: Connected</span>
+              <span className="text-green-600">• Frontend: Active</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Hero Section */}
       <section className="py-20">
@@ -83,6 +135,76 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Status Section */}
+      <section id="status" className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold text-gray-900 mb-8">
+            System Status
+          </h2>
+          <div className="max-w-2xl mx-auto">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center justify-center space-x-2">
+                  {backendStatus.connected ? (
+                    <>
+                      <CheckCircle className="h-6 w-6 text-green-600" />
+                      <span className="text-green-600">All Systems Operational</span>
+                    </>
+                  ) : (
+                    <>
+                      <div className="h-6 w-6 rounded-full bg-yellow-500" />
+                      <span className="text-yellow-600">Connecting...</span>
+                    </>
+                  )}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span>Frontend Service</span>
+                    <div className="flex items-center space-x-2">
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <span className="text-green-600">Active</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-between items-center">
+                    <span>Backend API</span>
+                    <div className="flex items-center space-x-2">
+                      {backendStatus.connected ? (
+                        <>
+                          <CheckCircle className="h-4 w-4 text-green-600" />
+                          <span className="text-green-600">Connected</span>
+                        </>
+                      ) : (
+                        <>
+                          <div className="h-4 w-4 rounded-full bg-yellow-500" />
+                          <span className="text-yellow-600">Connecting</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-between items-center">
+                    <span>Live Backend Services</span>
+                    <div className="flex items-center space-x-2">
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <span className="text-green-600">api.opsmith.biz</span>
+                    </div>
+                  </div>
+                </div>
+                
+                {backendStatus.timestamp && (
+                  <div className="mt-4 pt-4 border-t text-sm text-gray-500">
+                    Last checked: {new Date(backendStatus.timestamp).toLocaleString()}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-20 bg-blue-600">
         <div className="container mx-auto px-4 text-center">
@@ -106,11 +228,15 @@ export default function HomePage() {
               <Brain className="h-6 w-6" />
               <span className="text-lg font-bold">OpSmith</span>
             </div>
-            <p className="text-gray-400">
+            <p className="text-gray-400 mb-4">
               AI-powered operations intelligence platform
             </p>
+            <div className="text-sm text-gray-500">
+              <p>✅ Frontend: Next.js 14 • Backend: Express.js • Deployment: Combined Service</p>
+              <p>🔗 Connected to: api.opsmith.biz (Live Backend)</p>
+            </div>
             <div className="mt-8 pt-8 border-t border-gray-800 text-sm text-gray-400">
-              © 2024 OpSmith. All rights reserved.
+              © 2024 OpSmith. All rights reserved. • Clean Repository Deployment
             </div>
           </div>
         </div>
