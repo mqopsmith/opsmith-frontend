@@ -1,11 +1,11 @@
 {
-  "name": "opsmith-frontend",
+  "name": "opsmith-frontend-combined",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3000",
+    "dev": "node server.js",
     "build": "next build",
-    "start": "next start -p 3000",
+    "start": "node server.js",
     "lint": "next lint",
     "test": "jest",
     "type-check": "tsc --noEmit"
@@ -32,9 +32,12 @@
     "axios": "^1.6.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.0",
     "lucide-react": "^0.290.0",
     "next": "14.0.0",
     "next-auth": "^4.24.5",
+    "node-fetch": "^3.3.0",
     "postcss": "^8",
     "react": "^18",
     "react-dom": "^18",
